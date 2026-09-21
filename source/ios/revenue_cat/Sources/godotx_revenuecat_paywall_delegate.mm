@@ -45,7 +45,7 @@
 
 - (void)paywallViewController:(RCPaywallViewController *)controller didFailPurchasingWithError:(NSError *)error {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self emit:"error" reason:String(error.localizedDescription.UTF8String) entitlements:0];
+        [self emit:"error" reason:String::utf8(error.localizedDescription.UTF8String) entitlements:0];
     });
 }
 
@@ -63,7 +63,7 @@
 
 - (void)paywallViewController:(RCPaywallViewController *)controller didFailRestoringWithError:(NSError *)error {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self emit:"error" reason:String(error.localizedDescription.UTF8String) entitlements:0];
+        [self emit:"error" reason:String::utf8(error.localizedDescription.UTF8String) entitlements:0];
     });
 }
 
