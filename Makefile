@@ -36,6 +36,10 @@ ANDROID_MODULE    = revenue_cat
 # ============================================================================
 BUILD_CONFIGS    = Debug Release
 APPLE_SDK_ARCHS  = iphoneos/arm64 iphonesimulator/arm64 iphonesimulator/x86_64
+# Slices kept by trim-apple (diapason fork): a Godot iOS export links only
+# these; the tvOS/watchOS/visionOS/macOS/Catalyst slices RevenueCat ships add
+# ~750 MB to every consuming game repo per SDK bump.
+APPLE_KEEP_SLICES = ios-arm64 ios-arm64_x86_64-simulator
 
 # ============================================================================
 # Version Configuration
@@ -59,6 +63,7 @@ help:
 	@echo "  unsign-sdk          - Remove signatures from RevenueCat SDK frameworks"
 	@echo "  setup-apple         - Install Apple dependencies (CocoaPods + XcodeGen) for RevenueCat"
 	@echo "  build-apple         - Build iOS RevenueCat plugin (GodotxRevenueCat xcframework + .gdip)"
+	@echo "  trim-apple          - Drop non-iOS slices from the built xcframeworks (fork-only)"
 	@echo "  build-android       - Build Android RevenueCat plugin (.aar)"
 	@echo "  build-all           - Build everything (Apple + Android)"
 	@echo "  package             - Create distribution package (godotx_revenuecat.zip)"
@@ -284,6 +289,11 @@ build-android:
 # ============================================================================
 # Combined Targets
 # ============================================================================
+
+trim-apple:
+	@echo "→ Trimming xcframeworks in $(IOS_PLUGINS_DIR)/$(APPLE_MODULE) to: $(APPLE_KEEP_SLICES)"
+	@python3 $(ROOT_DIR)/tools/trim_xcframeworks.py $(IOS_PLUGINS_DIR)/$(APPLE_MODULE) $(APPLE_KEEP_SLICES)
+	@du -sh $(IOS_PLUGINS_DIR)/$(APPLE_MODULE)
 
 build-all: build-apple build-android
 	@echo ""
